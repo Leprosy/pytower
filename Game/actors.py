@@ -62,7 +62,7 @@ class Creep(Entity):
         self.g = 40
         self.b = 20
         self.speed = speed
-        self.hp = 200
+        self.hp = 120
         self.alive = False
         self.path_point = 1
 
@@ -109,6 +109,7 @@ class Tower(Entity):
         self.cooldown = 0.8
         self.cooldown_timer = 0
         self.bullet = None
+        self.range = 250
 
     def shoot(self, target):
         if self.bullet is None:
@@ -135,6 +136,7 @@ class Bullet(Entity):
 
         self.speed = speed
         self.target = ent
+        self.damage = 20
 
     def update(self):
         #Update the position, in function of target's position
@@ -148,4 +150,10 @@ class Bullet(Entity):
         #Impact?        
         if self.dist(self.target) < self.target.radius:
             self.alive = False
+            self.target.hp -= self.damage
+            print self.target.hp
+
+            if self.target.hp <= 0:
+                self.target.alive = False
+
 

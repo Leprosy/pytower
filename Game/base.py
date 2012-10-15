@@ -13,23 +13,28 @@ class Game(pyglet.window.Window):
         pyglet.resource.path = ['res', 'res/img', 'res/snd']
         pyglet.resource.reindex()
 
-        #Resources, actors and stuff
-        self.data = json.load(open('res/maps/map1/data.json'))
+        #Attributes
 
+        #Init map
+        self.startMap(1)
+
+    def startMap(self, map=1):
+        #Reset elements
         self.Towers = list()  # Towers in the map
         self.Creeps = list()  # The creeps
-        self.Cursor = Entity('mouse', 0, 0)
-        self.Towers.append(Tower('firebolt', 200, 300))
+        self.x = 0
+        self.y = 0
 
+        #Init map data
+        self.data = json.load(open('res/maps/map%d/data.json' % map))
+        self.Towers.append(Tower('firebolt', 200, 300))
         for i in range(10):
             self.Creeps.append(Creep('treanth', self.data['path'], 1))
         self.creep_cooldown = 3
         self.creep_cooldowntimer = 0
         self.creep_released = 0
 
-        self.x = 0
-        self.y = 0
-        self.bgimage = pyglet.resource.image('bg1.png')
+        self.bgimage = pyglet.resource.image('bg%d.png' % map)
 
     #Events handlers
     def on_draw(self):
@@ -38,14 +43,10 @@ class Game(pyglet.window.Window):
 
         #Backgrounds
         self.bgimage.blit(0, 0)
-        self.Cursor.render()
 
         #Towers
         for Tower in self.Towers:
             Tower.render()
-
-            if Tower.dist(self.Cursor) < 200:
-                Tower.shoot(self.Cursor)
 
         #Creeps
         if self.creep_released < len(self.Creeps):
@@ -58,12 +59,15 @@ class Game(pyglet.window.Window):
             if Creep.alive is True:
                 Creep.update()
                 Creep.render()
+                
+                if Tower.dist(Creep) < Tower.range:
+                    Tower.shoot(Creep)
 
         #GUI
 
     def on_mouse_motion(self, x, y, dx, dy):
-        self.Cursor.x = x
-        self.Cursor.y = y
+        self.x = x
+        self.y = y
 
     #Starts
     def game_start(self):
