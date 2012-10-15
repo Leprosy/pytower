@@ -2,6 +2,10 @@ import pyglet
 import math
 import time
 
+
+class Point:
+    pass
+
 class Entity:
     """
     All entities(such as towers and creeps) have the same 
@@ -52,16 +56,20 @@ class Entity:
 
 class Creep(Entity):
     def __init__(self, name, path, speed=1):
-        Entity.__init__(self, name, path[0].x, path[0].y)
+        self.path = self._obj(path)
+        Entity.__init__(self, name, self.path[0].x, self.path[0].y)
         self.r = 200
         self.g = 40
         self.b = 20
         self.speed = speed
-
-        self.path = path
+        self.hp = 200
+        self.alive = False
         self.path_point = 1
 
     def update(self):
+        if self.alive is False:
+            return
+
         #Update the position, in function of path point
         angle = self.angle(self.path[self.path_point])
         xdif = self.speed * math.cos(angle)
@@ -71,13 +79,25 @@ class Creep(Entity):
         self.x = self.x + xdif
 
         #Reach point?
-        if self.dist(self.target) < self.target.radius:
+        if self.dist(self.path[self.path_point]) < 5:
             self.path_point += 1
 
         #End of the line?
         if self.path_point == len(self.path):
+            self.hp = 0
+            self.alive = False
             print "OUCH"
 
+    def _obj(self, path):
+        points = list()
+
+        for point in path:
+            P = Point()
+            P.x = point['x']
+            P.y = point['y']
+            points.append(P)
+
+        return points
 
 class Tower(Entity):
     def __init__(self, name, x=0, y=0):

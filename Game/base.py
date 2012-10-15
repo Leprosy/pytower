@@ -1,5 +1,6 @@
 import pyglet
 import json
+import time
 from pyglet.window import mouse
 from Game.actors import Tower, Creep, Entity
 
@@ -13,18 +14,18 @@ class Game(pyglet.window.Window):
         pyglet.resource.reindex()
 
         #Resources, actors and stuff
-        self.config = json.load(open('res/maps/map1/data.json'))
+        self.data = json.load(open('res/maps/map1/data.json'))
 
         self.Towers = list()  # Towers in the map
         self.Creeps = list()  # The creeps
-        self.AliveCreeps = list()
         self.Cursor = Entity('mouse', 0, 0)
         self.Towers.append(Tower('firebolt', 200, 300))
 
         for i in range(10):
-            self.Creeps.append(Creep('treanth', self.config.path, 1))
+            self.Creeps.append(Creep('treanth', self.data['path'], 1))
         self.creep_cooldown = 3
         self.creep_cooldowntimer = 0
+        self.creep_released = 0
 
         self.x = 0
         self.y = 0
@@ -47,14 +48,16 @@ class Game(pyglet.window.Window):
                 Tower.shoot(self.Cursor)
 
         #Creeps
-        if len(self.AliveCreeps) < len(self.Creeps):
+        if self.creep_released < len(self.Creeps):
             if time.time() - self.creep_cooldowntimer > self.creep_cooldown:
                 self.creep_cooldowntimer = time.time()
-                self.AliveCreeps.append(self.Creep[0])
+                self.Creeps[self.creep_released].alive = True
+                self.creep_released += 1
 
-        for Creep in self.AliveCreeps:
-            Creep.update()
-            Creep.render()
+        for Creep in self.Creeps:
+            if Creep.alive is True:
+                Creep.update()
+                Creep.render()
 
         #GUI
 
@@ -65,3 +68,4 @@ class Game(pyglet.window.Window):
     #Starts
     def game_start(self):
         pyglet.app.run()
+
