@@ -1,0 +1,25 @@
+{
+    "creeps": [
+        {
+            "treanth": {
+                "hp": 50,
+                "speed": 1,
+                "gold": 50
+            }
+        },
+        {
+            "cthon": {
+                "hp": 120,
+                "speed": 1,
+                "gold": 80
+            }
+        },
+        {
+            "zap": {
+                "hp": 40,
+                "speed": 2,
+                "gold": 30
+            }
+        }
+    ]
+}

@@ -1,6 +1,7 @@
 import pyglet
 import math
 import time
+import json
 
 
 class Point:
@@ -55,6 +56,8 @@ class Entity:
 
 
 class Creep(Entity):
+    defs = json.load(open('res/defs/creeps.json'))
+
     def __init__(self, name, path, speed=1):
         self.path = self._obj(path)
         Entity.__init__(self, name, self.path[0].x, self.path[0].y)
@@ -99,6 +102,7 @@ class Creep(Entity):
 
         return points
 
+
 class Tower(Entity):
     def __init__(self, name, x=0, y=0):
         Entity.__init__(self, name, x, y)
@@ -126,6 +130,7 @@ class Tower(Entity):
         if self.bullet is not None:
             self.bullet.render()
             self.bullet.update()
+
 
 class Bullet(Entity):
     def __init__(self, name, ent, x=0, y=0, speed=6):

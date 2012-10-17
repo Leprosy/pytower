@@ -1,7 +1,7 @@
 import pyglet
 import json
 import time
-from pyglet.window import mouse
+from pyglet.window import mouse, key
 from Game.actors import Tower, Creep, Entity
 
 
@@ -16,9 +16,9 @@ class Game(pyglet.window.Window):
         #Attributes
 
         #Init map
-        self.startMap(1)
+        self.start_map(1)
 
-    def startMap(self, map=1):
+    def start_map(self, map=1):
         #Reset elements
         self.Towers = list()  # Towers in the map
         self.Creeps = list()  # The creeps
@@ -68,6 +68,11 @@ class Game(pyglet.window.Window):
     def on_mouse_motion(self, x, y, dx, dy):
         self.x = x
         self.y = y
+
+    def on_key_press(self, symbol, mod):
+        if symbol == key.SPACE:
+            #self.send_next_wave()
+            self.start_map(1)
 
     #Starts
     def game_start(self):
