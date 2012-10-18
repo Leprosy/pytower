@@ -1,5 +1,6 @@
 {
     "name": "Noob map",
+    "creep_cooldown": 2,
     "path": [
         {"x": 20, "y": 100},
         {"x": 350, "y": 100},
@@ -7,5 +8,16 @@
         {"x": 600, "y": 280}
     ],
     "waves": [
+        [
+            {"treanth": 6},
+            {"zap": 5},
+            {"treanth": 2}
+        ],
+        [
+            {"treanth": 12}
+        ],
+        [
+            {"cthon": 10}
+        ]
     ]
 }

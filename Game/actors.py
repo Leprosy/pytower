@@ -7,9 +7,10 @@ import json
 class Point:
     pass
 
+
 class Entity:
     """
-    All entities(such as towers and creeps) have the same 
+    All entities(such as towers and creeps) have the same
     properties, like x and y coordinates and stuff like that.
     """
     def __init__(self, name, x=0, y=0):
@@ -58,14 +59,18 @@ class Entity:
 class Creep(Entity):
     defs = json.load(open('res/defs/creeps.json'))
 
-    def __init__(self, name, path, speed=1):
-        self.path = self._obj(path)
+    def __init__(self, name, path):
+        self.path = self._toObj(path)
         Entity.__init__(self, name, self.path[0].x, self.path[0].y)
         self.r = 200
         self.g = 40
         self.b = 20
-        self.speed = speed
-        self.hp = 120
+
+        self.speed = Creep.defs[name]['speed']
+        self.hp = Creep.defs[name]['hp']
+        self.gold = Creep.defs[name]['gold']
+        self.radius = Creep.defs[name]['radius']
+
         self.alive = False
         self.path_point = 1
 
@@ -87,11 +92,18 @@ class Creep(Entity):
 
         #End of the line?
         if self.path_point == len(self.path):
-            self.hp = 0
             self.alive = False
-            print "OUCH"
+            print "OUCH!"
 
-    def _obj(self, path):
+    def render(self):
+        Entity.render(self)
+        pyglet.text.Label("%s - %d" % (self.name, self.hp),
+                          font_name='Arial',
+                          font_size=8,
+                          x=self.x, y=self.y + 10,
+                          anchor_x='center', anchor_y='center').draw()
+
+    def _toObj(self, path):
         points = list()
 
         for point in path:
@@ -152,13 +164,10 @@ class Bullet(Entity):
         self.y = self.y + ydif
         self.x = self.x + xdif
 
-        #Impact?        
+        #Impact?
         if self.dist(self.target) < self.target.radius:
             self.alive = False
             self.target.hp -= self.damage
-            print self.target.hp
 
             if self.target.hp <= 0:
                 self.target.alive = False
-
-
