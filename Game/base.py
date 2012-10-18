@@ -6,11 +6,15 @@ from Game.actors import Tower, Creep
 
 
 class Game(pyglet.window.Window):
-    def __init__(self):
+    def __init__(self, config):
         super(Game, self).__init__(800, 600)
 
         #Environment setup
-        pyglet.resource.path = ['res', 'res/img', 'res/snd']
+        print config
+        self.config_data = config
+        pyglet.resource.path = [self.config_data['game_res'],
+                                self.config_data['game_res'] + '/img',
+                                self.config_data['game_res'] + '/snd']
         pyglet.resource.reindex()
 
         #Attributes
@@ -29,7 +33,8 @@ class Game(pyglet.window.Window):
 
     def start_map(self, map_num=1):
         #Load map data
-        self.mapdata = json.load(open('res/maps/map%d/data.json' % map_num))
+        self.mapdata = json.load(open(self.config_data['game_res'] +
+                                      '/maps/map%d/data.json' % map_num))
 
         #Set elements
         self.Towers = list()  # Towers in the map
@@ -47,9 +52,6 @@ class Game(pyglet.window.Window):
 
         #Debug tower
         self.Towers.append(Tower('firebolt', 200, 300))
-
-        #GO!
-        self.send_wave()
 
     def send_wave(self):
         if self.wave < len(self.mapdata['waves']):

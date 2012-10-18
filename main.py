@@ -1,4 +1,5 @@
 import pyglet
+import json
 from pyglet.window import mouse
 from Game.base import Game
 
@@ -7,5 +8,6 @@ from Game.base import Game
 
 #Main entry
 if __name__ == '__main__':
-    G = Game()
+    config = json.load(open('config.json'))
+    G = Game(config)
     G.game_start()

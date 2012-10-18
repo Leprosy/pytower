@@ -127,6 +127,8 @@ class Creep(Entity):
 
 
 class Tower(Entity):
+    defs = json.load(open('res/defs/towers.json'))
+
     def __init__(self, name, x=0, y=0):
         Entity.__init__(self, name, x, y)
         self.r = 40
