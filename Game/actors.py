@@ -30,24 +30,24 @@ class Entity:
 
     def render(self):
         pyglet.graphics.draw(6, pyglet.gl.GL_POLYGON,
-            ('v2f', (self.x - 10, self.y - 4,
-                     self.x, self.y - 12,
-                     self.x + 10, self.y - 4,
-                     self.x + 10, self.y + 4,
-                     self.x, self.y + 12,
-                     self.x - 10, self.y + 4)),
-             ('c3B', (
-                      self.r, self.g, self.b,
-                      self.r, self.g, self.b,
-                      self.r, self.g, self.b,
-                      self.r, self.g, self.b,
-                      self.r, self.g, self.b,
-                      self.r, self.g, self.b))
-        )
+                             ('v2f', (self.x - 10, self.y - 4,
+                             self.x, self.y - 12,
+                             self.x + 10, self.y - 4,
+                             self.x + 10, self.y + 4,
+                             self.x, self.y + 12,
+                             self.x - 10, self.y + 4)),
+                             ('c3B', (
+                              self.r, self.g, self.b,
+                              self.r, self.g, self.b,
+                              self.r, self.g, self.b,
+                              self.r, self.g, self.b,
+                              self.r, self.g, self.b,
+                              self.r, self.g, self.b))
+                             )
 
     def dist(self, ent):
         return math.sqrt(math.pow(self.x - ent.x, 2) +
-                math.pow(self.y - ent.y, 2))
+                         math.pow(self.y - ent.y, 2))
 
     def angle(self, ent):
         return math.atan2(ent.y - self.y, ent.x - self.x)
@@ -149,7 +149,7 @@ class Tower(Entity):
     def render(self):
         Entity.render(self)
 
-        if self.bullet is not None and self.bullet.alive == False:
+        if self.bullet is not None and self.bullet.alive is False:
             self.bullet = None
 
         if self.bullet is not None:

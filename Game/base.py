@@ -95,15 +95,19 @@ class Game(pyglet.window.Window):
         #GUI
         pyglet.text.Label("Gold : %d - Lives : %d || Wave : %d" %
                           (self.gold, self.lives, self.wave),
-                  font_name='Arial',
-                  font_size=8,
-                  x=10, y=580,
-                  anchor_x='left', anchor_y='center').draw()
+                          font_name='Arial',
+                          font_size=8,
+                          x=10, y=580,
+                          anchor_x='left', anchor_y='center').draw()
 
     #Events handlers
     def on_mouse_motion(self, x, y, dx, dy):
         self.x = x
         self.y = y
+
+    def on_mouse_press(self, x, y, button, modifiers):
+        if button == mouse.LEFT:
+            print 'click'
 
     def on_key_press(self, symbol, mod):
         if symbol == key.SPACE:

@@ -1,6 +1,4 @@
-import pyglet
 import json
-from pyglet.window import mouse
 from Game.base import Game
 
 
