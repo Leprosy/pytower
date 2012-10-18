@@ -20,6 +20,7 @@ class Game(pyglet.window.Window):
         #Attributes
         self.x = 0
         self.y = 0
+        self.selected_tower = None
 
         self.wave = 0
         self.lives = 0
@@ -96,12 +97,27 @@ class Game(pyglet.window.Window):
                         Tower.shoot(Creep)
 
             #GUI
-            pyglet.text.Label("Gold : %d - Lives : %d || Wave : %d" %
-                              (self.gold, self.lives, self.wave),
+            pyglet.text.Label("Gold : %d - Lives : %d" %
+                              (self.gold, self.lives),
                               font_name='Arial',
                               font_size=8,
                               x=10, y=580,
                               anchor_x='left', anchor_y='center').draw()
+            pyglet.text.Label("Wave : %d - Released : %d" %
+                              (self.wave, self.creep_released),
+                              font_name='Arial',
+                              font_size=8,
+                              x=600, y=580,
+                              anchor_x='left', anchor_y='center').draw()
+
+            if self.selected_tower is not None:
+                pyglet.text.Label("%s selected" %
+                                  self.Towers[self.selected_tower].name,
+                                  font_name='Arial',
+                                  font_size=8,
+                                  x=300, y=550,
+                                  anchor_x='center', anchor_y='center').draw()
+
         else:
             #Main menu
             pyglet.text.Label("PyTower",
@@ -126,8 +142,26 @@ class Game(pyglet.window.Window):
         self.y = y
 
     def on_mouse_press(self, x, y, button, modifiers):
-        if button == mouse.LEFT:
-            print 'click'
+        #In game mouse clicks
+        if self.inGame:
+            if button == mouse.LEFT:
+                i = 0
+                selected = False
+
+                #Pick a tower
+                for tower in self.Towers:
+                    print "Tower = %d, %d" % (tower.x, tower.y)
+                    print "Click = %d, %d" % (x, y)
+                    r = tower.radius * 2
+
+                    if x >= tower.x - r and x <= tower.x + r:
+                        if y >= tower.y - r and y <= tower.y + r:
+                            self.selected_tower = i
+                            selected = True
+                    i += 1
+
+                if selected is False:
+                    self.selected_tower = None
 
     def on_key_press(self, symbol, mod):
         #Main menu keys
