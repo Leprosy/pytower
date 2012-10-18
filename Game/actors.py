@@ -60,15 +60,26 @@ class Creep(Entity):
     defs = json.load(open('res/defs/creeps.json'))
 
     def __init__(self, name, path):
-        self.path = self._toObj(path)
-        Entity.__init__(self, name, self.path[0].x, self.path[0].y)
+        path = self._toObj(path)
+        Entity.__init__(self, name, path[0].x, path[0].y)
+
+        try:
+            tmp = name.split('.')
+            if len(tmp) > 1:
+                name = tmp[0]
+                self.level = int(tmp[1])
+        except:
+            pass
+
+        self.name = name
+        self.path = path
         self.r = 200
         self.g = 40
         self.b = 20
 
         self.speed = Creep.defs[name]['speed']
-        self.hp = Creep.defs[name]['hp']
-        self.gold = Creep.defs[name]['gold']
+        self.hp = Creep.defs[name]['hp'] * self.level
+        self.gold = Creep.defs[name]['gold'] * self.level
         self.radius = Creep.defs[name]['radius']
 
         self.alive = False
@@ -97,7 +108,7 @@ class Creep(Entity):
 
     def render(self):
         Entity.render(self)
-        pyglet.text.Label("%s - %d" % (self.name, self.hp),
+        pyglet.text.Label("%s Lv.%d - %d" % (self.name, self.level, self.hp),
                           font_name='Arial',
                           font_size=8,
                           x=self.x, y=self.y + 10,

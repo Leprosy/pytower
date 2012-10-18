@@ -54,7 +54,7 @@ class Game(pyglet.window.Window):
     def send_wave(self):
         if self.wave < len(self.mapdata['waves']):
             #Generate next wave o'Creeps
-            #self.Creeps = list()
+            self.Creeps = list()
 
             for squad in self.mapdata['waves'][self.wave]:
                 for creep in squad:
