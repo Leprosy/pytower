@@ -29,7 +29,7 @@ class Game(pyglet.window.Window):
         self.mapdata = None
 
         #Init map
-        self.start_map(1)
+        #self.start_map(1)
 
     def start_map(self, map_num=1):
         #Load map data
@@ -70,35 +70,50 @@ class Game(pyglet.window.Window):
         #Clear window
         self.clear()
 
-        #Backgrounds
-        self.map_image.blit(0, 0)
+        if self.inGame:
+            #Backgrounds
+            self.map_image.blit(0, 0)
 
-        #Towers
-        for Tower in self.Towers:
-            Tower.render()
+            #Towers
+            for Tower in self.Towers:
+                Tower.render()
 
-        #Creeps
-        if self.creep_released < len(self.Creeps):
-            if time.time() - self.creep_cooldowntimer > self.creep_cooldown:
-                self.creep_cooldowntimer = time.time()
-                self.Creeps[self.creep_released].alive = True
-                self.creep_released += 1
+            #Creeps
+            if self.creep_released < len(self.Creeps):
+                delta = time.time() - self.creep_cooldowntimer
 
-        for Creep in self.Creeps:
-            if Creep.alive is True:
-                Creep.update()
-                Creep.render()
+                if delta > self.creep_cooldown:
+                    self.creep_cooldowntimer = time.time()
+                    self.Creeps[self.creep_released].alive = True
+                    self.creep_released += 1
 
-                if Tower.dist(Creep) < Tower.range:
-                    Tower.shoot(Creep)
+            for Creep in self.Creeps:
+                if Creep.alive is True:
+                    Creep.update()
+                    Creep.render()
 
-        #GUI
-        pyglet.text.Label("Gold : %d - Lives : %d || Wave : %d" %
-                          (self.gold, self.lives, self.wave),
-                          font_name='Arial',
-                          font_size=8,
-                          x=10, y=580,
-                          anchor_x='left', anchor_y='center').draw()
+                    if Tower.dist(Creep) < Tower.range:
+                        Tower.shoot(Creep)
+
+            #GUI
+            pyglet.text.Label("Gold : %d - Lives : %d || Wave : %d" %
+                              (self.gold, self.lives, self.wave),
+                              font_name='Arial',
+                              font_size=8,
+                              x=10, y=580,
+                              anchor_x='left', anchor_y='center').draw()
+        else:
+            #Main menu
+            pyglet.text.Label("PyTower",
+                              font_name='Arial',
+                              font_size=32,
+                              x=100, y=300,
+                              anchor_x='left', anchor_y='center').draw()
+            pyglet.text.Label("<Press Spacebar to Start>",
+                              font_name='Arial',
+                              font_size=16,
+                              x=100, y=250,
+                              anchor_x='left', anchor_y='center').draw()
 
     #Events handlers
     def on_mouse_motion(self, x, y, dx, dy):
@@ -110,9 +125,20 @@ class Game(pyglet.window.Window):
             print 'click'
 
     def on_key_press(self, symbol, mod):
-        if symbol == key.SPACE:
-            self.send_wave()
-            #self.start_map(1)
+        #Main menu keys
+        if self.inGame is False:
+            if symbol == key.SPACE:
+                self.start_map(1)
+            if symbol == key.ESCAPE:
+                quit()
+
+        #In game keys
+        else:
+            if symbol == key.ESCAPE:
+                self.inGame = False
+
+            if symbol == key.SPACE:
+                self.send_wave()
 
     #Starts
     def game_start(self):
