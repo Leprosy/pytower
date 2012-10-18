@@ -109,10 +109,15 @@ class Game(pyglet.window.Window):
                               font_size=32,
                               x=100, y=300,
                               anchor_x='left', anchor_y='center').draw()
-            pyglet.text.Label("<Press Spacebar to Start>",
+            pyglet.text.Label("< Press Spacebar to start >",
                               font_name='Arial',
-                              font_size=16,
+                              font_size=14,
                               x=100, y=250,
+                              anchor_x='left', anchor_y='center').draw()
+            pyglet.text.Label("< Press ESC to exit >",
+                              font_name='Arial',
+                              font_size=14,
+                              x=100, y=230,
                               anchor_x='left', anchor_y='center').draw()
 
     #Events handlers
