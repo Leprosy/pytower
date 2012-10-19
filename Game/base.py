@@ -7,7 +7,7 @@ from Game.actors import Tower, Creep
 
 class Game(pyglet.window.Window):
     def __init__(self, config):
-        super(Game, self).__init__(800, 600)
+        super(Game, self).__init__(800, 600, caption=config['title'])                
 
         #Environment setup
         self.config_data = config
@@ -15,6 +15,12 @@ class Game(pyglet.window.Window):
                                 self.config_data['game_res'] + '/img',
                                 self.config_data['game_res'] + '/snd']
         pyglet.resource.reindex()
+
+        self.set_icon(
+                pyglet.resource.image('icon16.png'),
+                pyglet.resource.image('icon32.png'),
+                pyglet.resource.image('icon64.png'),
+                pyglet.resource.image('icon128.png'))
 
         #Attributes
         self.x = 0
