@@ -1,6 +1,5 @@
 import pyglet
 import json
-import time
 from pyglet.window import mouse, key
 from Game.actors import Tower, Creep
 
@@ -51,7 +50,6 @@ class Game(pyglet.window.Window):
         self.wave = 0
         self.lives = 20
         self.gold = 300
-        self.creep_cooldowntimer = 0
         self.creep_released = 0
         self.creep_cooldown = self.mapdata['creep_cooldown']
         self.map_image = pyglet.resource.image('bg%d.png' % map_num)
@@ -62,18 +60,34 @@ class Game(pyglet.window.Window):
         self.Towers.append(Tower('firebolt', 200, 300))
 
     def send_wave(self):
-        if self.wave < len(self.mapdata['waves']):
-            #Generate next wave o'Creeps
-            self.creep_released = 0
-            self.Creeps = list()
+        if self.creep_released < len(self.Creeps):
+            return
+        if self.wave >= len(self.mapdata['waves']):
+            return
 
-            for squad in self.mapdata['waves'][self.wave]:
-                for creep in squad:
-                    for i in range(squad[creep]):
-                        self.Creeps.append(Creep(creep, self.mapdata['path']))
+        #Generate next wave o'Creeps
+        self.creep_released = 0
+        self.Creeps = list()
 
-            #D'oh
-            self.wave += 1
+        for squad in self.mapdata['waves'][self.wave]:
+            for creep in squad:
+                for i in range(squad[creep]):
+                    self.Creeps.append(Creep(creep, self.mapdata['path']))
+
+        #D'oh
+        self.wave += 1
+
+        #Schedule the sending of the first creep(I hate creeps)
+        pyglet.clock.schedule_once(self.send_creep, self.creep_cooldown)
+
+    def send_creep(self, secs):
+        #Is there any creep left to release?
+        if self.creep_released < len(self.Creeps):
+            self.Creeps[self.creep_released].alive = True
+            self.creep_released += 1
+
+            #Schedule the next creep
+            pyglet.clock.schedule_once(self.send_creep, self.creep_cooldown)
 
     def update(self, secs):
         #Clear window
@@ -83,42 +97,8 @@ class Game(pyglet.window.Window):
             #Backgrounds
             self.map_image.blit(0, 0)
 
-            #Towers
-            for Tower in self.Towers:
-                Tower.render()
-
-            #Creeps
-            if self.creep_released < len(self.Creeps):
-                delta = time.time() - self.creep_cooldowntimer
-
-                if delta > self.creep_cooldown:
-                    self.creep_cooldowntimer = time.time()
-                    self.Creeps[self.creep_released].alive = True
-                    self.creep_released += 1
-
-            for Creep in self.Creeps:
-                if Creep.reached_end:
-                    self.lives -= 1
-                    self.Creeps.remove(Creep)
-
-                    if self.lives <= 0:
-                        self.inGame = False
-
-                elif Creep.alive is True:
-                    Creep.update()
-                    Creep.render()
-
-                    for Tower in self.Towers:
-                        if Tower.dist(Creep) < Tower.range:
-                            Tower.shoot(Creep)
-
-                    if Creep.alive is False and Creep.hp <= 0:
-                        self.gold += self.Creep.gold
-                        self.Creeps.remove(Creep)
-
-                elif Creep.hp <= 0:
-                        self.gold += Creep.gold
-                        self.Creeps.remove(Creep)
+            #self.update_towers()
+            self.update_creeps()
 
             #GUI
             self.draw_gameGUI()
@@ -126,6 +106,27 @@ class Game(pyglet.window.Window):
         else:
             #Main menu
             self.draw_mainmenu()
+
+    def update_creeps(self):
+        #Creeps
+        for Creep in self.Creeps:
+            #Alive and well? move and draw
+            if Creep.alive is True:
+                Creep.update()
+                Creep.render()
+
+                #Lost a life
+                if Creep.reached_end:
+                    self.lives -= 1
+                    self.Creeps.remove(Creep)
+
+                    if self.lives <= 0:
+                        self.inGame = False
+
+            #Dead creep => profit
+            if Creep.alive is False and Creep.hp <= 0:
+                self.gold += self.Creep.gold
+                self.Creeps.remove(Creep)
 
     def draw_gameGUI(self):
             pyglet.text.Label("Gold : %d - Lives : %d" %
