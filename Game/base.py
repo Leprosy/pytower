@@ -7,7 +7,8 @@ from Game.actors import Tower, Creep
 
 class Game(pyglet.window.Window):
     def __init__(self, config):
-        super(Game, self).__init__(800, 600, caption=config['title'])
+        super(Game, self).__init__(800, 600, caption=config['title'],
+                                   vsync=False)
 
         #Environment setup
         self.config_data = config
