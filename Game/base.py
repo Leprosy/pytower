@@ -10,7 +10,6 @@ class Game(pyglet.window.Window):
         super(Game, self).__init__(800, 600)
 
         #Environment setup
-        print config
         self.config_data = config
         pyglet.resource.path = [self.config_data['game_res'],
                                 self.config_data['game_res'] + '/img',
@@ -57,6 +56,7 @@ class Game(pyglet.window.Window):
     def send_wave(self):
         if self.wave < len(self.mapdata['waves']):
             #Generate next wave o'Creeps
+            self.creep_released = 0
             self.Creeps = list()
 
             for squad in self.mapdata['waves'][self.wave]:
@@ -89,6 +89,14 @@ class Game(pyglet.window.Window):
                     self.creep_released += 1
 
             for Creep in self.Creeps:
+            
+                if Creep.reached_end:
+                    self.lives -= 1
+                    self.Creeps.remove(Creep)
+
+                    if self.lives <= 0:
+                        self.inGame = False
+
                 if Creep.alive is True:
                     Creep.update()
                     Creep.render()
@@ -120,7 +128,7 @@ class Game(pyglet.window.Window):
 
         else:
             #Main menu
-            pyglet.text.Label("PyTower",
+            pyglet.text.Label("Towers R Us",
                               font_name='Arial',
                               font_size=32,
                               x=100, y=300,
@@ -150,8 +158,6 @@ class Game(pyglet.window.Window):
 
                 #Pick a tower
                 for tower in self.Towers:
-                    print "Tower = %d, %d" % (tower.x, tower.y)
-                    print "Click = %d, %d" % (x, y)
                     r = tower.radius * 2
 
                     if x >= tower.x - r and x <= tower.x + r:
@@ -181,5 +187,5 @@ class Game(pyglet.window.Window):
 
     #Starts
     def game_start(self):
-        pyglet.clock.schedule_interval(self.update, 1 / 60.0)
+        pyglet.clock.schedule_interval(self.update, 1 / 50.0)
         pyglet.app.run()

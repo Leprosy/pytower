@@ -84,6 +84,7 @@ class Creep(Entity):
 
         self.alive = False
         self.path_point = 1
+        self.reached_end = False
 
     def update(self):
         if self.alive is False:
@@ -104,7 +105,7 @@ class Creep(Entity):
         #End of the line?
         if self.path_point == len(self.path):
             self.alive = False
-            print "OUCH!"
+            self.reached_end = True
 
     def render(self):
         Entity.render(self)
