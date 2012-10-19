@@ -78,9 +78,9 @@ class Game(pyglet.window.Window):
         self.wave += 1
 
         #Schedule the sending of the first creep(I hate creeps)
-        pyglet.clock.schedule_once(self.send_creep, self.creep_cooldown)
+        self.send_creep()
 
-    def send_creep(self, secs):
+    def send_creep(self, secs=0):
         #Is there any creep left to release?
         if self.creep_released < len(self.Creeps):
             self.Creeps[self.creep_released].alive = True
@@ -97,8 +97,8 @@ class Game(pyglet.window.Window):
             #Backgrounds
             self.map_image.blit(0, 0)
 
-            #self.update_towers()
             self.update_creeps()
+            self.update_towers()
 
             #GUI
             self.draw_gameGUI()
@@ -106,6 +106,29 @@ class Game(pyglet.window.Window):
         else:
             #Main menu
             self.draw_mainmenu()
+
+    def update_towers(self):
+        #Towers R Us
+        for Tower in self.Towers:
+            Tower.render()
+
+            #Check which creep will be shot by this tower(criteria: nearest)
+            if Tower.not_shooting() and len(self.Creeps) > 0:
+                i = 0
+                min_c = -1
+                min_d = 9999
+
+                for Creep in self.Creeps:
+                    if Creep.alive is True and Tower.dist(Creep) < Tower.range:
+                        if Tower.dist(Creep) < min_d:
+                            min_d = Tower.dist(Creep)
+                            min_c = i
+
+                    i += 1
+
+                #Shoot the creep
+                if min_c >= 0:
+                    Tower.shoot(self.Creeps[min_c])
 
     def update_creeps(self):
         #Creeps
@@ -125,7 +148,7 @@ class Game(pyglet.window.Window):
 
             #Dead creep => profit
             if Creep.alive is False and Creep.hp <= 0:
-                self.gold += self.Creep.gold
+                self.gold += Creep.gold
                 self.Creeps.remove(Creep)
 
     def draw_gameGUI(self):

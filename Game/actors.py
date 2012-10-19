@@ -141,6 +141,11 @@ class Tower(Entity):
         self.bullet = None
         self.range = 250
 
+    def not_shooting(self):
+        if self.bullet is None:
+            return True
+        return False
+
     def shoot(self, target):
         if self.bullet is None:
             if time.time() - self.cooldown_timer > self.cooldown:
@@ -150,6 +155,11 @@ class Tower(Entity):
     def render(self):
         Entity.render(self)
 
+        #Target died before bullet reached it
+        if self.bullet is not None and self.bullet.target.alive is False:
+            self.bullet = None
+
+        #Remove bullets
         if self.bullet is not None and self.bullet.alive is False:
             self.bullet = None
 
