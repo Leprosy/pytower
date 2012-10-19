@@ -95,7 +95,6 @@ class Game(pyglet.window.Window):
                     self.creep_released += 1
 
             for Creep in self.Creeps:
-            
                 if Creep.reached_end:
                     self.lives -= 1
                     self.Creeps.remove(Creep)
@@ -141,6 +140,12 @@ class Game(pyglet.window.Window):
                                   x=300, y=550,
                                   anchor_x='center', anchor_y='center').draw()
 
+            pyglet.text.Label("FPS: %d" %
+                              pyglet.clock.get_fps(),
+                              font_name='Arial',
+                              font_size=8,
+                              x=300, y=580,
+                              anchor_x='center', anchor_y='center').draw()
         else:
             #Main menu
             pyglet.text.Label("Towers R Us",
@@ -206,5 +211,5 @@ class Game(pyglet.window.Window):
 
     #Starts
     def game_start(self):
-        pyglet.clock.schedule_interval(self.update, 1 / 50.0)
+        pyglet.clock.schedule_interval(self.update, 1 / 60.0)
         pyglet.app.run()

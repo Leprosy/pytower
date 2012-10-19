@@ -169,6 +169,11 @@ class Bullet(Entity):
         self.target = ent
         self.damage = 20
 
+    def render(self):
+        pyglet.graphics.draw(1, pyglet.gl.GL_POINTS,
+                             ('v2f', (self.x, self.y))
+                             )
+
     def update(self):
         #Update the position, in function of target's position
         angle = self.angle(self.target)
