@@ -7,7 +7,7 @@ from Game.actors import Tower, Creep
 
 class Game(pyglet.window.Window):
     def __init__(self, config):
-        super(Game, self).__init__(800, 600, caption=config['title'])                
+        super(Game, self).__init__(800, 600, caption=config['title'])
 
         #Environment setup
         self.config_data = config
@@ -16,11 +16,10 @@ class Game(pyglet.window.Window):
                                 self.config_data['game_res'] + '/snd']
         pyglet.resource.reindex()
 
-        self.set_icon(
-                pyglet.resource.image('icon16.png'),
-                pyglet.resource.image('icon32.png'),
-                pyglet.resource.image('icon64.png'),
-                pyglet.resource.image('icon128.png'))
+        self.set_icon(pyglet.resource.image('icon16.png'),
+                      pyglet.resource.image('icon32.png'),
+                      pyglet.resource.image('icon64.png'),
+                      pyglet.resource.image('icon128.png'))
 
         #Attributes
         self.x = 0
@@ -33,6 +32,8 @@ class Game(pyglet.window.Window):
         self.inGame = False
 
         self.mapdata = None
+
+        self.clock = pyglet.clock.ClockDisplay()
 
         #Init map
         #self.start_map(1)
@@ -119,6 +120,13 @@ class Game(pyglet.window.Window):
                         self.Creeps.remove(Creep)
 
             #GUI
+            self.draw_gameGUI()
+
+        else:
+            #Main menu
+            self.draw_mainmenu()
+
+    def draw_gameGUI(self):
             pyglet.text.Label("Gold : %d - Lives : %d" %
                               (self.gold, self.lives),
                               font_name='Arial',
@@ -140,14 +148,9 @@ class Game(pyglet.window.Window):
                                   x=300, y=550,
                                   anchor_x='center', anchor_y='center').draw()
 
-            pyglet.text.Label("FPS: %d" %
-                              pyglet.clock.get_fps(),
-                              font_name='Arial',
-                              font_size=8,
-                              x=300, y=580,
-                              anchor_x='center', anchor_y='center').draw()
-        else:
-            #Main menu
+            self.clock.draw()
+
+    def draw_mainmenu(self):
             pyglet.text.Label("Towers R Us",
                               font_name='Arial',
                               font_size=32,
