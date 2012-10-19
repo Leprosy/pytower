@@ -42,7 +42,7 @@ class Game(pyglet.window.Window):
 
         self.wave = 0
         self.lives = 20
-        self.gold = 0
+        self.gold = 300
         self.creep_cooldowntimer = 0
         self.creep_released = 0
         self.creep_cooldown = self.mapdata['creep_cooldown']
@@ -97,12 +97,21 @@ class Game(pyglet.window.Window):
                     if self.lives <= 0:
                         self.inGame = False
 
-                if Creep.alive is True:
+                elif Creep.alive is True:
                     Creep.update()
                     Creep.render()
 
-                    if Tower.dist(Creep) < Tower.range:
-                        Tower.shoot(Creep)
+                    for Tower in self.Towers:
+                        if Tower.dist(Creep) < Tower.range:
+                            Tower.shoot(Creep)
+
+                    if Creep.alive is False and Creep.hp <= 0:
+                        self.gold += self.Creep.gold
+                        self.Creeps.remove(Creep)
+
+                elif Creep.hp <= 0:
+                        self.gold += Creep.gold
+                        self.Creeps.remove(Creep)
 
             #GUI
             pyglet.text.Label("Gold : %d - Lives : %d" %
@@ -168,6 +177,10 @@ class Game(pyglet.window.Window):
 
                 if selected is False:
                     self.selected_tower = None
+
+                    if self.gold >= 150:
+                        self.Towers.append(Tower('firebolt', x, y))
+                        self.gold -= 150
 
     def on_key_press(self, symbol, mod):
         #Main menu keys
