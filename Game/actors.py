@@ -131,15 +131,18 @@ class Tower(Entity):
     defs = json.load(open('res/defs/towers.json'))
 
     def __init__(self, name, x=0, y=0):
-        Entity.__init__(self, name, x, y)
+        name = int(name)
+        T = Tower.defs['towers'][name]
+
+        Entity.__init__(self, T['name'], x, y)
         self.r = 40
         self.g = 40
         self.b = 200
 
-        self.cooldown = 0.8
+        self.cooldown = T['cooldown']
         self.cooldown_timer = 0
         self.bullet = None
-        self.range = 250
+        self.range = T['range']
 
     def not_shooting(self):
         if self.bullet is None:
@@ -154,6 +157,11 @@ class Tower(Entity):
 
     def render(self):
         Entity.render(self)
+        pyglet.text.Label("%s lv%d" % (self.name, self.level),
+                          font_name='Arial',
+                          font_size=8,
+                          x=self.x, y=self.y + 10,
+                          anchor_x='center', anchor_y='center').draw()
 
         #Target died before bullet reached it
         if self.bullet is not None and self.bullet.target.alive is False:

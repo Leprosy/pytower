@@ -1,7 +1,7 @@
 import pyglet
 import json
 from pyglet.window import mouse, key
-from Game.actors import Tower, Creep
+from Game.actors import Entity, Tower, Creep
 
 
 class Game(pyglet.window.Window):
@@ -25,6 +25,7 @@ class Game(pyglet.window.Window):
         self.x = 0
         self.y = 0
         self.selected_tower = None
+        self.buying_tower = None
 
         self.wave = 0
         self.lives = 0
@@ -57,7 +58,7 @@ class Game(pyglet.window.Window):
         self.inGame = True
 
         #Debug tower
-        self.Towers.append(Tower('firebolt', 200, 300))
+        #self.Towers.append(Tower('firebolt', 200, 300))
 
     def send_wave(self):
         if self.creep_released < len(self.Creeps):
@@ -173,6 +174,10 @@ class Game(pyglet.window.Window):
                                   x=300, y=550,
                                   anchor_x='center', anchor_y='center').draw()
 
+            if self.buying_tower is not None:
+                e = Entity("cursor", self.x, self.y)
+                e.render()
+
             self.clock.draw()
 
     def draw_mainmenu(self):
@@ -217,9 +222,13 @@ class Game(pyglet.window.Window):
                 if selected is False:
                     self.selected_tower = None
 
-                    if self.gold >= 150:
-                        self.Towers.append(Tower('firebolt', x, y))
-                        self.gold -= 150
+                #Buy a tower
+                if self.buying_tower is not None:
+                    T = Tower.defs['towers'][self.buying_tower]
+
+                    if T['cost'] <= self.gold:
+                        self.Towers.append(Tower(self.buying_tower, x, y))
+                        self.gold -= T['cost']
 
     def on_key_press(self, symbol, mod):
         #Main menu keys
@@ -232,10 +241,16 @@ class Game(pyglet.window.Window):
         #In game keys
         else:
             if symbol == key.ESCAPE:
-                self.inGame = False
+                if self.buying_tower is not None:
+                    self.buying_tower = None
+                else:
+                    self.inGame = False
 
             if symbol == key.SPACE:
                 self.send_wave()
+
+            if symbol >= 48 and symbol <= 57:
+                self.buying_tower = symbol - 48
 
     #Starts
     def game_start(self):
