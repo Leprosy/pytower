@@ -2,7 +2,8 @@ import pyglet
 import math
 import time
 import json
-
+import base
+from base import Game
 
 class Point:
     pass
@@ -60,8 +61,13 @@ class Creep(Entity):
     defs = json.load(open('res/defs/creeps.json'))
 
     def __init__(self, name, path):
+        self.sprite = pyglet.sprite.\
+                      Sprite(pyglet.resource.image("%s.png" % name),
+                      batch=Game.batch)
         path = self._toObj(path)
         Entity.__init__(self, name, path[0].x, path[0].y)
+        self.sprite.x = self.x
+        self.sprite.y = self.y
 
         try:
             tmp = name.split('.')
@@ -95,8 +101,10 @@ class Creep(Entity):
         xdif = self.speed * math.cos(angle)
         ydif = self.speed * math.sin(angle)
 
-        self.y = self.y + ydif
-        self.x = self.x + xdif
+        self.sprite.y = self.sprite.y + ydif
+        self.sprite.x = self.sprite.x + xdif
+        self.x = self.sprite.x
+        self.y = self.sprite.y
 
         #Reach point?
         if self.dist(self.path[self.path_point]) < 5:
@@ -108,7 +116,8 @@ class Creep(Entity):
             self.reached_end = True
 
     def render(self):
-        Entity.render(self)
+        #Entity.render(self)
+        self.sprite.draw()
         pyglet.text.Label("%s Lv.%d - %d" % (self.name, self.level, self.hp),
                           font_name='Arial',
                           font_size=8,

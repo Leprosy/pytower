@@ -5,6 +5,8 @@ from Game.actors import Entity, Tower, Creep
 
 
 class Game(pyglet.window.Window):
+    batch = pyglet.graphics.Batch()
+
     def __init__(self, config):
         super(Game, self).__init__(800, 600, caption=config['title'],
                                    vsync=False)
@@ -98,8 +100,12 @@ class Game(pyglet.window.Window):
             #Backgrounds
             self.map_image.blit(0, 0)
 
+            #update actors
             self.update_creeps()
             self.update_towers()
+
+            #draw all
+            Game.batch.draw()
 
             #GUI
             self.draw_gameGUI()
@@ -137,7 +143,6 @@ class Game(pyglet.window.Window):
             #Alive and well? move and draw
             if Creep.alive is True:
                 Creep.update()
-                Creep.render()
 
                 #Lost a life
                 if Creep.reached_end:
